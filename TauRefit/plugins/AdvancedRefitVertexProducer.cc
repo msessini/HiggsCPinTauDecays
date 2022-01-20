@@ -89,7 +89,7 @@ void AdvancedRefitVertexProducer::produce(edm::Event& iEvent, const edm::EventSe
 		edm::Handle<reco::CandidateView> leptons;
 		iEvent.getByToken(*srcLeptonsPart, leptons);
 		for (size_t i=0; i<leptons->size(); ++i){
-			allLeptons_.push_back(leptons->ptrAt(i));
+		  allLeptons_.push_back(leptons->ptrAt(i));
 		}
 	}
 
@@ -124,14 +124,15 @@ void AdvancedRefitVertexProducer::produce(edm::Event& iEvent, const edm::EventSe
 		RefitVertex newPV(thePV); // initialized to the PV
 
 		// loop over the PFCandidates
+		
 		for (std::vector<pat::PackedCandidate>::const_iterator cand = PFCands->begin(); cand != PFCands->end(); ++cand) {
-
+		  
 			if (cand->charge()==0 || cand->vertexRef().isNull() ) continue;
 			if ( !(cand->bestTrack()) ) continue;
 			bool skipTrack = false;
 
 			// loop over the pair components
-			for (size_t i=0; i<pair->size(); ++i){
+			for (size_t i=0; i<pair->size(); ++i) {
 
 				// if pair[i]==electron || muon
 				if (std::abs(pair->at(i)->pdgId())==11 || std::abs(pair->at(i)->pdgId())==13){
@@ -168,9 +169,10 @@ void AdvancedRefitVertexProducer::produce(edm::Event& iEvent, const edm::EventSe
 
 
 		// loop over the PFLostTracks
-		if(useLostCands_){
+		if(useLostCands_) {
+		  
 			for (std::vector<pat::PackedCandidate>::const_iterator cand = PFLostTracks->begin(); cand != PFLostTracks->end(); ++cand) {
-	
+			  
 				if (cand->charge()==0 || cand->vertexRef().isNull() ) continue;
 				if ( !(cand->bestTrack()) ) continue;
 				bool skipTrack = false;
@@ -178,22 +180,22 @@ void AdvancedRefitVertexProducer::produce(edm::Event& iEvent, const edm::EventSe
 				// loop over the pair components
 				for (size_t i=0; i<pair->size(); ++i){
 	
-					// if pair[i]==electron || muon
-					if (std::abs(pair->at(i)->pdgId())==11 || std::abs(pair->at(i)->pdgId())==13){
-						if (reco::deltaR(pair->at(i)->p4(), cand->p4())<deltaRThreshold
-							&& std::abs(pair->at(i)->pt()/cand->pt() -1)<deltaPtThreshold){
-							skipTrack = true;
-						}
-					} // if pair[i]==electron || muon
+				  // if pair[i]==electron || muon
+				  if (std::abs(pair->at(i)->pdgId())==11 || std::abs(pair->at(i)->pdgId())==13){
+				    if (reco::deltaR(pair->at(i)->p4(), cand->p4())<deltaRThreshold
+					&& std::abs(pair->at(i)->pt()/cand->pt() -1)<deltaPtThreshold){
+				      skipTrack = true;
+				    }
+				  } // if pair[i]==electron || muon
 	
 					else{
-						edm::Ptr<pat::Tau> pair_i = (edm::Ptr<pat::Tau>)pair->at(i);
-						for (size_t j=0; j< pair_i->signalChargedHadrCands().size(); ++j){
-							if (reco::deltaR(pair_i->signalChargedHadrCands()[j]->p4(), cand->p4())<deltaRThreshold
-									&& std::abs(pair_i->signalChargedHadrCands()[j]->pt()/cand->pt() -1)<deltaPtThreshold){
-									skipTrack = true;
-							}
-						} // loop over charged hadrons from tau
+					  edm::Ptr<pat::Tau> pair_i = (edm::Ptr<pat::Tau>)pair->at(i);
+					  for (size_t j=0; j< pair_i->signalChargedHadrCands().size(); ++j){
+					    if (reco::deltaR(pair_i->signalChargedHadrCands()[j]->p4(), cand->p4())<deltaRThreshold
+						&& std::abs(pair_i->signalChargedHadrCands()[j]->pt()/cand->pt() -1)<deltaPtThreshold){
+					      skipTrack = true;
+					    }
+					  } // loop over charged hadrons from tau
 	
 					} // if pair[i]==tau
 	
@@ -218,6 +220,7 @@ void AdvancedRefitVertexProducer::produce(edm::Event& iEvent, const edm::EventSe
 			transTracks.push_back(transTrackBuilder->build(*iter));
 		}
 		bool FitOk(true);
+		//cout<<"New: "<<transTracks.size()<<endl;
 		if ( transTracks.size() >= 3 ) {
 			AdaptiveVertexFitter avf;
 			avf.setWeightThreshold(0.1); //weight per track. allow almost every fit, else --> exception
