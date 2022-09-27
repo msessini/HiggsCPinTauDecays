@@ -1,0 +1,4 @@
+[submodule "TauDecaysInterface"]
+	path = TauDecaysInterface
+	url = git@github.com:msessini/TauDecaysInterface.git
+	branch = cmssw_only
